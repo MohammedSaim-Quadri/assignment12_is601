@@ -1,264 +1,314 @@
 # 📦 Project Setup
+# FastAPI Calculator Application - Module 12
 
----
+A production-ready REST API application with user authentication and calculation management, featuring complete CRUD operations, JWT authentication, and comprehensive testing.
 
-# 🧩 1. Install Homebrew (Mac Only)
+## 🚀 Features
 
-> Skip this step if you're on Windows.
+- ✅ User registration and authentication with JWT tokens
+- ✅ Password hashing with bcrypt
+- ✅ Calculation CRUD operations (BREAD pattern)
+- ✅ Polymorphic calculation types (Addition, Subtraction, Multiplication, Division)
+- ✅ PostgreSQL database with SQLAlchemy ORM
+- ✅ Redis for token blacklisting
+- ✅ Docker containerization
+- ✅ Comprehensive test suite (105 tests)
+- ✅ CI/CD pipeline with GitHub Actions
+- ✅ API documentation with OpenAPI/Swagger
 
-Homebrew is a package manager for macOS.  
-You’ll use it to easily install Git, Python, Docker, etc.
+## 📋 API Endpoints
 
-**Install Homebrew:**
+### Authentication
+- `POST /auth/register` - Register a new user
+- `POST /auth/login` - Login and receive JWT tokens
+- `POST /auth/token` - OAuth2 form-based login
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+### Calculations (BREAD)
+- `POST /calculations` - **Add** a new calculation
+- `GET /calculations` - **Browse** all calculations for current user
+- `GET /calculations/{id}` - **Read** a specific calculation
+- `PUT /calculations/{id}` - **Edit** a calculation (inputs and/or type)
+- `DELETE /calculations/{id}` - **Delete** a calculation
+
+### Health Check
+- `GET /health` - Check API status
+
+## 🛠️ Technology Stack
+
+- **Framework**: FastAPI 0.115.8
+- **Database**: PostgreSQL 17
+- **ORM**: SQLAlchemy 2.0.38
+- **Authentication**: JWT with python-jose
+- **Password Hashing**: bcrypt (passlib)
+- **Caching**: Redis 7
+- **Testing**: pytest, pytest-cov
+- **Containerization**: Docker, Docker Compose
+- **CI/CD**: GitHub Actions
+- **Python Version**: 3.10
+
+## 📦 Project Structure
+
+```
+kaw393939-module12_is601/
+├── app/
+│   ├── auth/           # Authentication logic (JWT, Redis)
+│   ├── core/           # Configuration
+│   ├── models/         # SQLAlchemy models
+│   ├── schemas/        # Pydantic schemas
+│   └── main.py         # FastAPI application
+├── tests/
+│   ├── unit/           # Unit tests
+│   ├── integration/    # Integration tests
+│   └── e2e/            # End-to-end API tests
+├── docker-compose.yml  # Multi-container setup
+├── Dockerfile          # Application container
+└── requirements.txt    # Python dependencies
 ```
 
-**Verify Homebrew:**
+## 🚀 Getting Started
 
+### Prerequisites
+
+- Docker and Docker Compose
+- Git
+- Python 3.10+ (for local development)
+
+### Installation & Setup
+
+1. **Clone the repository**
 ```bash
-brew --version
+git clone <your-repo-url>
+cd kaw393939-module12_is601
 ```
 
-If you see a version number, you're good to go.
-
----
-
-# 🧩 2. Install and Configure Git
-
-## Install Git
-
-- **MacOS (using Homebrew)**
-
+2. **Start the application**
 ```bash
-brew install git
+docker-compose up --build
 ```
 
-- **Windows**
+This will start:
+- **Web API** on http://localhost:8000
+- **PostgreSQL** on localhost:5432
+- **Redis** on localhost:6379
+- **pgAdmin** on http://localhost:5050
 
-Download and install [Git for Windows](https://git-scm.com/download/win).  
-Accept the default options during installation.
+3. **Access the API documentation**
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-**Verify Git:**
+## 🧪 Running Tests
+
+### Option 1: Using Docker (Recommended)
 
 ```bash
-git --version
+# Start services
+docker-compose up -d
+
+# Run all tests
+docker-compose exec web pytest
+
+# Run with coverage report
+docker-compose exec web pytest --cov=app --cov-report=html
+
+# Run specific test file
+docker-compose exec web pytest tests/integration/test_user_auth.py -v
 ```
 
----
-
-## Configure Git Globals
-
-Set your name and email so Git tracks your commits properly:
+### Option 2: Local Testing
 
 ```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
-```
+# Create virtual environment with Python 3.10
+python3.10 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-Confirm the settings:
-
-```bash
-git config --list
-```
-
----
-
-## Generate SSH Keys and Connect to GitHub
-
-> Only do this once per machine.
-
-1. Generate a new SSH key:
-
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-(Press Enter at all prompts.)
-
-2. Start the SSH agent:
-
-```bash
-eval "$(ssh-agent -s)"
-```
-
-3. Add the SSH private key to the agent:
-
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
-
-4. Copy your SSH public key:
-
-- **Mac/Linux:**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | pbcopy
-```
-
-- **Windows (Git Bash):**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | clip
-```
-
-5. Add the key to your GitHub account:
-   - Go to [GitHub SSH Settings](https://github.com/settings/keys)
-   - Click **New SSH Key**, paste the key, save.
-
-6. Test the connection:
-
-```bash
-ssh -T git@github.com
-```
-
-You should see a success message.
-
----
-
-# 🧩 3. Clone the Repository
-
-Now you can safely clone the course project:
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
----
-
-# 🛠️ 4. Install Python 3.10+
-
-## Install Python
-
-- **MacOS (Homebrew)**
-
-```bash
-brew install python
-```
-
-- **Windows**
-
-Download and install [Python for Windows](https://www.python.org/downloads/).  
-✅ Make sure you **check the box** `Add Python to PATH` during setup.
-
-**Verify Python:**
-
-```bash
-python3 --version
-```
-or
-```bash
-python --version
-```
-
----
-
-## Create and Activate a Virtual Environment
-
-(Optional but recommended)
-
-```bash
-python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate.bat  # Windows
-```
-
-### Install Required Packages
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Run tests
+pytest
+
+# Run with coverage
+pytest --cov=app --cov-report=html
 ```
 
----
+### Test Coverage
 
-# 🐳 5. (Optional) Docker Setup
+Current test coverage: **67%**
 
-> Skip if Docker isn't used in this module.
+```
+Name                         Coverage
+------------------------------------------
+app/models/calculation.py    92%
+app/models/user.py           89%
+app/schemas/calculation.py   92%
+app/operations/__init__.py   100%
+```
 
-## Install Docker
+## 🔧 Configuration
 
-- [Install Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-- [Install Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
-
-## Build Docker Image
+Environment variables (set in `docker-compose.yml` or `.env`):
 
 ```bash
-docker build -t <image-name> .
+DATABASE_URL=postgresql://postgres:postgres@db:5432/fastapi_db
+JWT_SECRET_KEY=super-secret-key-for-jwt-min-32-chars
+JWT_REFRESH_SECRET_KEY=super-refresh-secret-key-min-32-chars
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+BCRYPT_ROUNDS=12
+REDIS_URL=redis://redis:6379/0
 ```
 
-## Run Docker Container
+## 📖 API Usage Examples
+
+### Register a User
 
 ```bash
-docker run -it --rm <image-name>
+curl -X POST "http://localhost:8000/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "username": "johndoe",
+    "password": "SecurePass123!",
+    "confirm_password": "SecurePass123!"
+  }'
 ```
 
----
-
-# 🚀 6. Running the Project
-
-- **Without Docker**:
+### Login
 
 ```bash
-python main.py
+curl -X POST "http://localhost:8000/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "johndoe",
+    "password": "SecurePass123!"
+  }'
 ```
 
-(or update this if the main script is different.)
-
-- **With Docker**:
+### Create a Calculation
 
 ```bash
-docker run -it --rm <image-name>
+curl -X POST "http://localhost:8000/calculations" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -d '{
+    "type": "addition",
+    "inputs": [10.5, 3, 2]
+  }'
 ```
 
----
-
-# 📝 7. Submission Instructions
-
-After finishing your work:
+### Update Calculation Type (NEW FEATURE)
 
 ```bash
-git add .
-git commit -m "Complete Module X"
-git push origin main
+curl -X PUT "http://localhost:8000/calculations/{calc_id}" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -d '{
+    "type": "multiplication",
+    "inputs": [5, 4]
+  }'
 ```
 
-Then submit the GitHub repository link as instructed.
+## 🐛 Issues Found & Fixed
 
----
+### Issue #1: Calculation Type Update Not Supported
 
-# 🔥 Useful Commands Cheat Sheet
+**Problem**: The PUT endpoint for updating calculations only allowed changing inputs, not the calculation type.
 
-| Action                         | Command                                          |
-| ------------------------------- | ------------------------------------------------ |
-| Install Homebrew (Mac)          | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| Install Git                     | `brew install git` or Git for Windows installer |
-| Configure Git Global Username  | `git config --global user.name "Your Name"`      |
-| Configure Git Global Email     | `git config --global user.email "you@example.com"` |
-| Clone Repository                | `git clone <repo-url>`                          |
-| Create Virtual Environment     | `python3 -m venv venv`                           |
-| Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
-| Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
-| Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
+**Root Cause**: The `CalculationUpdate` schema didn't include a `type` field.
 
----
+**Solution**: 
+- Added optional `type` field to `CalculationUpdate` schema
+- Modified endpoint logic to handle polymorphic type changes
+- Preserves calculation ID and creation timestamp during type changes
 
-# 📋 Notes
+**Testing**: Added comprehensive tests in `test_calculation_schema.py`
 
-- Install **Homebrew** first on Mac.
-- Install and configure **Git** and **SSH** before cloning.
-- Use **Python 3.10+** and **virtual environments** for Python projects.
-- **Docker** is optional depending on the project.
+### Issue #2: Python 3.12 Compatibility
 
----
+**Problem**: Tests failing with `ModuleNotFoundError: No module named 'distutils'`
 
-# 📎 Quick Links
+**Root Cause**: 
+- Local environment using Python 3.12
+- `aioredis==2.0.1` requires `distutils` (removed in Python 3.11+)
 
-- [Homebrew](https://brew.sh/)
-- [Git Downloads](https://git-scm.com/downloads)
-- [Python Downloads](https://www.python.org/downloads/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+**Solution**: Use Python 3.10 for consistency with Docker environment
+
+## 🚢 CI/CD Pipeline
+
+GitHub Actions workflow (`.github/workflows/test.yml`):
+
+1. **Test Stage**:
+   - Sets up PostgreSQL database
+   - Runs unit tests
+   - Runs integration tests
+   - Runs E2E tests
+   - Generates coverage report
+
+2. **Security Stage**:
+   - Builds Docker image
+   - Scans for vulnerabilities with Trivy
+   - Fails on CRITICAL/HIGH severity issues
+
+3. **Deploy Stage** (main branch only):
+   - Builds multi-platform Docker image
+   - Pushes to Docker Hub
+   - Tags with `latest` and commit SHA
+
+## 🐳 Docker Hub
+
+**Repository**: saimquadri/601_module12
+
+**Pull the image**:
+```bash
+docker pull saimquadri/601_module12:latest
+```
+
+**Run the container**:
+```bash
+docker run -p 8000:8000 saimquadri/601_module12:latest
+```
+
+## 📝 Development Notes
+
+### Database Schema
+
+- **Users Table**: Stores user accounts with hashed passwords
+- **Calculations Table**: Polymorphic table storing all calculation types
+- **Relationships**: One-to-Many (User → Calculations) with cascade delete
+
+### Authentication Flow
+
+1. User registers → Password hashed with bcrypt
+2. User logs in → JWT access token + refresh token generated
+3. Protected endpoints → Verify JWT token via dependency injection
+4. Token expiration → Access: 30 minutes, Refresh: 7 days
+
+### Calculation Types
+
+All calculations use polymorphic inheritance:
+- **Addition**: Sum of all inputs
+- **Subtraction**: Sequential subtraction from first input
+- **Multiplication**: Product of all inputs
+- **Division**: Sequential division from first input (prevents division by zero)
+
+## 🎓 Learning Outcomes Achieved
+
+- ✅ CLO3: Python applications with automated testing
+- ✅ CLO4: GitHub Actions for CI/CD
+- ✅ CLO9: Docker containerization
+- ✅ CLO10: REST API creation and testing
+- ✅ CLO11: SQL database integration
+- ✅ CLO12: JSON serialization with Pydantic
+- ✅ CLO13: Secure authentication (JWT, bcrypt)
+
+## 📄 License
+
+MIT License - See LICENSE file for details
+
+## 🔗 Links
+
+- [Docker Hub Repository](https://hub.docker.com/r/saimquadri/601_module12)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
